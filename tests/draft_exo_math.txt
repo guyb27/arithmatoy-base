@@ -1,0 +1,37 @@
+P(n) -> n x (a + b) = n x a + n x b
+
+Cas n = 0
+0 x (a + b) = ?0 x a + 0 x b
+
+(regle 1 de la multiplication) 0 x y -> 0
+0 x (a + b) -> 0
+
+0 x a -> 0
+0 x b -> 0
+0 x a + 0 x b -> 0 + 0
+
+(regle de 1 de l addition) 0 + y -> y
+0 + 0 -> 0
+
+P(0) est vrai
+
+si on suppose n x (a + b) = n x a + n x b
+est ce que c est vrai pour Sn ?
+P(n) => P(Sn)
+P(n) -> P(Sn)
+
+Sn x (a + b) = ? Sn x a + Sn x b
+
+Sn x (a + b) ->
+regle 2 de la multiplication => Sn x y -> (n x y) + y
+
+Sn x (a + b) -> (n x(a + b)) + (a + b) -> (n x a + n x b) + (a + b)
+-> n x a + n x b +a+ b
+
+Sn x a + Sn x b -> ???
+
+Sn x a -> (n x a) + a
+Sn x b -> (n x b) + b
+
+Sn x a + Sn x b -> (n x a) + a + (n x b) + b -> n x a +a + n x b + b
+-> n x a + n x b + a + b
