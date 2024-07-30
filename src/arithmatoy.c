@@ -17,24 +17,39 @@ char *arithmatoy_add(unsigned int base, const char *lhs, const char *rhs) {
     fprintf(stderr, "add: entering function\n");
   }
 
+
   // Fill the function, the goal is to compute lhs + rhs
   // You should allocate a new char* large enough to store the result as a
   // string Implement the algorithm Return the result
-  int left = 0;
-  int right = 0;
-  int res = 0;
-  char *char_res;
 
-  char_res=(char*)malloc(sizeof(char) * 99999);
-  for (int i = 0, mult = 1; get_digit_value(lhs[i]);i++, mult *= 10)
-    res += get_digit_value(lhs[i]) * mult;
-  for (int i = 0, mult = 1; get_digit_value(rhs[i]);i++, mult *= 10)
-    res += get_digit_value(rhs[i]) * mult;
-  for (int i = sizeof(char_res);i>=0;i--)
-    char_res[i]=0;
-  for (int i = 0, mult = 1;to_digit(res/mult%10)!=-1;i++, mult*=10)
-    char_res[i]=to_digit(res/mult%10);
-  return char_res;
+  lhs = drop_leading_zeros(lhs);
+  rhs = drop_leading_zeros(rhs);
+
+  int lhs_len = strlen(lhs);
+  int rhs_len = strlen(rhs);
+  int max_len = lhs_len > rhs_len ? lhs_len : rhs_len;
+
+  char *result = (char *)malloc(max_len + 2); // +1 for possible carry, +1 for '\0'
+  if (!result) {
+    debug_abort("Memory allocation failed");
+    return NULL;
+  }
+
+  int carry = 0;
+  int result_pos = 0;
+  for (int i = 0; i < max_len || carry; i++) {
+    int lhs_digit = i < lhs_len ? get_digit_value(lhs[lhs_len - 1 - i]) : 0;
+    int rhs_digit = i < rhs_len ? get_digit_value(rhs[rhs_len - 1 - i]) : 0;
+
+    int sum = lhs_digit + rhs_digit + carry;
+    result[result_pos++] = to_digit(sum % base);
+    carry = sum / base;
+  }
+
+  result[result_pos] = '\0';
+  reverse(result);
+
+  return result;
 }
 
 char *arithmatoy_sub(unsigned int base, const char *lhs, const char *rhs) {
@@ -42,20 +57,86 @@ char *arithmatoy_sub(unsigned int base, const char *lhs, const char *rhs) {
     fprintf(stderr, "sub: entering function\n");
   }
 
+
   // Fill the function, the goal is to compute lhs - rhs (assuming lhs > rhs)
   // You should allocate a new char* large enough to store the result as a
   // string Implement the algorithm Return the result
+
+  lhs = drop_leading_zeros(lhs);
+  rhs = drop_leading_zeros(rhs);
+
+  int lhs_len = strlen(lhs);
+  int rhs_len = strlen(rhs);
+
+  char *result = (char *)malloc(lhs_len + 1);
+  if (!result) {
+    debug_abort("Memory allocation failed");
+    return NULL;
+  }
+
+  int borrow = 0;
+  int result_pos = 0;
+  for (int i = 0; i < lhs_len; i++) {
+    int lhs_digit = get_digit_value(lhs[lhs_len - 1 - i]);
+    int rhs_digit = i < rhs_len ? get_digit_value(rhs[rhs_len - 1 - i]) : 0;
+
+    int diff = lhs_digit - rhs_digit - borrow;
+    if (diff < 0) {
+      diff += base;
+      borrow = 1;
+    } else {
+      borrow = 0;
+    }
+
+    result[result_pos++] = to_digit(diff);
+  }
+
+  result[result_pos] = '\0';
+  reverse(result);
+
+  char *final_result = strdup(drop_leading_zeros(result));
+  free(result);
+
+  return final_result;
 }
+
 
 char *arithmatoy_mul(unsigned int base, const char *lhs, const char *rhs) {
   if (VERBOSE) {
     fprintf(stderr, "mul: entering function\n");
   }
 
-  // Fill the function, the goal is to compute lhs * rhs
-  // You should allocate a new char* large enough to store the result as a
-  // string Implement the algorithm Return the result
+  lhs = drop_leading_zeros(lhs);
+  rhs = drop_leading_zeros(rhs);
+
+  int lhs_len = strlen(lhs);
+  int rhs_len = strlen(rhs);
+
+  char *result = (char *)calloc(lhs_len + rhs_len + 1, sizeof(char));
+  if (!result) {
+    debug_abort("Memory allocation failed");
+    return NULL;
+  }
+
+  for (int i = 0; i < lhs_len; i++) {
+    int lhs_digit = get_digit_value(lhs[lhs_len - 1 - i]);
+    int carry = 0;
+
+    for (int j = 0; j < rhs_len || carry; j++) {
+      int rhs_digit = j < rhs_len ? get_digit_value(rhs[rhs_len - 1 - j]) : 0;
+      int current = carry + get_digit_value(result[i + j]) + lhs_digit * rhs_digit;
+
+      result[i + j] = to_digit(current % base);
+      carry = current / base;
+    }
+  }
+
+  reverse(result);
+
+  return drop_leading_zeros(result);
 }
+
+
 
 // Here are some utility functions that might be helpful to implement add, sub
 // and mul:
