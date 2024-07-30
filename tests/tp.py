@@ -24,11 +24,19 @@ def multiplication(a: str, b: str) -> str:
 
 
 def facto_ite(n: int) -> int:
-    pass
+    result = 1
+    if n == 0:
+        return result
+    for i in range(1, n + 1):
+        result *= i
+    return result
 
 
 def facto_rec(n: int) -> int:
-    pass
+    if n == 0:
+        return 1
+    else:
+        return n * facto_rec(n - 1)
 
 
 def fibo_rec(n: int) -> int:

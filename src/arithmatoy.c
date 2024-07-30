@@ -20,6 +20,21 @@ char *arithmatoy_add(unsigned int base, const char *lhs, const char *rhs) {
   // Fill the function, the goal is to compute lhs + rhs
   // You should allocate a new char* large enough to store the result as a
   // string Implement the algorithm Return the result
+  int left = 0;
+  int right = 0;
+  int res = 0;
+  char *char_res;
+
+  char_res=(char*)malloc(sizeof(char) * 99999);
+  for (int i = 0, mult = 1; get_digit_value(lhs[i]);i++, mult *= 10)
+    res += get_digit_value(lhs[i]) * mult;
+  for (int i = 0, mult = 1; get_digit_value(rhs[i]);i++, mult *= 10)
+    res += get_digit_value(rhs[i]) * mult;
+  for (int i = sizeof(char_res);i>=0;i--)
+    char_res[i]=0;
+  for (int i = 0, mult = 1;to_digit(res/mult%10)!=-1;i++, mult*=10)
+    char_res[i]=to_digit(res/mult%10);
+  return char_res;
 }
 
 char *arithmatoy_sub(unsigned int base, const char *lhs, const char *rhs) {
